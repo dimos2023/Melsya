@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إتمام الشراء | ميلسه</title>
+  <link rel="stylesheet" href="assets/Css/layout.css">
+  <link rel="stylesheet" href="assets/Css/main.css">
+  <link rel="stylesheet" href="assets/Css/ressponsive.css">
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="index.html"><span>م</span>ميلسه</a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">الرئيسية</a>
+        <a href="category.html">التصنيفات</a>
+        <a href="article.html">تفاصيل المنتج</a>
+        <a href="about.html">من نحن</a>
+      </div>
+      <div class="nav-actions">
+        <a class="cart-indicator" href="checkout.html">السلة <span class="cart-count" id="cartCount">0</span></a>
+        <button class="menu-toggle" id="menuToggle">القائمة</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="checkout-hero">
+      <div class="summary-card">
+        <div class="title-row">
+          <div>
+            <h2>سلة المشتريات</h2>
+            <p class="muted">تحقق من المنتجات واختر طريقة الدفع</p>
+          </div>
+          <div class="pill">آمنة وسريعة</div>
+        </div>
+        <div id="cartItems" class="grid" style="gap:10px;"></div>
+        <div class="total-row">
+          <span>الإجمالي</span>
+          <span id="cartTotal">0 ر.س</span>
+        </div>
+        <div class="checkout-actions">
+          <button class="btn btn-primary" id="proceedPayment">متابعة الدفع</button>
+          <a class="btn btn-ghost" href="category.html">متابعة التسوق</a>
+        </div>
+      </div>
+
+      <div class="summary-card" id="payments">
+        <h2>طرق الدفع</h2>
+        <p class="muted">اختر طريقتك المفضلة، وسيتم تأكيد الطلب عبر خدمة العملاء.</p>
+        <div class="pay-grid" id="payOptions">
+          <label class="pay-card"><input type="radio" name="pay" value="Tabby" checked> Tabby (تقسيط/دفعة)</label>
+          <label class="pay-card"><input type="radio" name="pay" value="Tamara"> Tamara (تقسيط/دفعة)</label>
+          <label class="pay-card"><input type="radio" name="pay" value="Visa/Mastercard"> Visa / Mastercard</label>
+          <label class="pay-card"><input type="radio" name="pay" value="Fawry Pay"> Fawry Pay</label>
+          <label class="pay-card"><input type="radio" name="pay" value="COD"> دفع عند الاستلام</label>
+        </div>
+        <div class="muted-box" id="payNote">سيتم توجيهك لإتمام الدفع عبر Tabby.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="bottom">
+        <span>© 2026 ميلسه</span>
+        <span class="muted">تجربة سلسة من الصورة حتى التسليم.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="chat-widget">
+    <div class="chat-panel open" id="chatPanel">
+      <div class="chat-header">مساعدة ميلسه</div>
+      <div class="chat-figure"></div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg">أهلاً بك! اسأليني عن المنتجات أو الدفع أو الشحن.</div>
+      </div>
+      <form class="chat-input" id="chatForm">
+        <input type="text" id="chatInput" placeholder="اكتبي سؤالك هنا..." />
+        <button type="submit">إرسال</button>
+      </form>
+    </div>
+    <button class="chat-toggle" id="chatToggle">اسألي ميلسه</button>
+  </div>
+
+  <script src="assets/Js/menu.js"></script>
+  <script>
+    const cartCountEl = document.getElementById('cartCount');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const payNote = document.getElementById('payNote');
+    const proceedBtn = document.getElementById('proceedPayment');
+
+    const getCart = () => {
+      try { return JSON.parse(localStorage.getItem('cart')) || []; } catch (e) { return []; }
+    };
+
+    const setCart = (items) => {
+      localStorage.setItem('cart', JSON.stringify(items));
+    };
+
+    const updateCount = () => {
+      if (cartCountEl) cartCountEl.textContent = getCart().length;
+    };
+
+    const renderCart = () => {
+      const items = getCart();
+      cartItemsEl.innerHTML = '';
+      let total = 0;
+      if (!items.length) {
+        cartItemsEl.innerHTML = '<p class="muted">السلة فارغة.</p>';
+      }
+      items.forEach((item, idx) => {
+        total += Number(item.price || 0);
+        const card = document.createElement('div');
+        card.className = 'item-line';
+        card.innerHTML = `
+          ${item.image ? `<img src="${item.image}" alt="${item.name}">` : ''}
+          <div>
+            <h4 class="headline">${item.name}</h4>
+            <p class="muted">${item.price} ر.س</p>
+          </div>
+          <button class="btn btn-ghost remove-item" data-idx="${idx}">إزالة</button>
+        `;
+        cartItemsEl.appendChild(card);
+      });
+      cartTotalEl.textContent = `${total.toFixed(2)} ر.س`;
+      cartItemsEl.querySelectorAll('.remove-item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.idx);
+          const current = getCart();
+          current.splice(id, 1);
+          setCart(current);
+          updateCount();
+          renderCart();
+        });
+      });
+    };
+
+    document.getElementById('payOptions').addEventListener('change', (e) => {
+      if (e.target.name === 'pay') {
+        const method = e.target.value;
+        const messages = {
+          'Tabby': 'سيتم توجيهك لإتمام الدفع عبر Tabby (تقسيط أو دفعة واحدة).',
+          'Tamara': 'سيتم توجيهك لإتمام الدفع عبر Tamara (تقسيط أو دفعة واحدة).',
+          'Visa/Mastercard': 'ادفع عبر البطاقات الائتمانية بشكل آمن.',
+          'Fawry Pay': 'سيتم إنشاء طلب فوري للدفع عبر فوري.',
+          'COD': 'سنؤكد الطلب ونجمع المبلغ عند الاستلام.'
+        };
+        payNote.textContent = messages[method] || '';
+      }
+    });
+
+    proceedBtn.addEventListener('click', () => {
+      const selected = document.querySelector('input[name="pay"]:checked')?.value || '';
+      alert(`سيتم المتابعة لإتمام الدفع عبر: ${selected}`);
+    });
+
+    updateCount();
+    renderCart();
+  </script>
+</body>
+</html>

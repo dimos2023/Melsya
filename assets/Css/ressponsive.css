@@ -101,17 +101,22 @@
 
 @media (max-width: 560px) {
   .container {
-    width: 94vw;
+    width: 92vw;
   }
 
   .hero-content h1 {
-    font-size: 30px;
+    font-size: 26px;
   }
 
   .title-row,
   .section-intro {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .hero,
+  .surface {
+    padding: 18px;
   }
 
   .pill-row {
@@ -121,5 +126,18 @@
   .article-meta,
   .article-actions {
     gap: 8px;
+  }
+
+  .product-card .thumb {
+    height: 180px;
+    padding: 12px;
+  }
+
+  .best-sellers .thumb {
+    height: 140px;
+  }
+
+  .chat-panel {
+    width: 90vw;
   }
 }

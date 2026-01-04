@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   if (chatToggle && chatPanel) {
-    chatPanel.classList.add('open');
     chatToggle.addEventListener('click', () => {
       chatPanel.classList.toggle('open');
     });
